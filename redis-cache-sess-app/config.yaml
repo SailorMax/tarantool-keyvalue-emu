@@ -1,0 +1,58 @@
+app:
+  file: 'redis-cache-sess-app/init.lua'
+  cfg:
+    greeting: 'Redis-Cache-Sess sample project'
+
+# memtx:
+#   memory: 268435456
+
+snapshot:
+  by:
+    interval: 600
+  count: 3
+
+# config:
+#   context:
+#     replicator_password:
+#       from: file
+#       file: /run/secrets/replicator_password.txt
+#       rstrip: true
+
+# https://www.tarantool.io/ru/doc/latest/concepts/configuration/configuration_credentials/
+# https://www.tarantool.io/ru/doc/latest/reference/reference_lua/box_space/_user/
+credentials:
+  users:
+    docker_user:
+      password: 'docker_secret'
+      roles: [ 'super' ]
+    replicator:
+      password: 'secret-pass'  # '{{ context.replicator_password }}'
+      roles: [ 'replication' ]
+
+iproto:
+  advertise:
+    peer:
+      login: 'replicator'
+
+replication:
+  failover: 'manual'
+
+# https://www.tarantool.io/en/doc/latest/how-to/replication/repl_bootstrap/
+groups:
+  group-001:
+    replicasets:
+      replicaset-001:
+        leader: 'instance-001'
+        instances:
+          instance-001:
+            iproto:
+              listen:
+              - uri: 'tarantool:3301'
+          instance-002:
+            iproto:
+              listen:
+              - uri: 'tarantool-replica:3301'
+
+# offline
+feedback:
+  enabled: false
