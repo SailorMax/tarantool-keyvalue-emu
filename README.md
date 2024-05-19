@@ -2,7 +2,7 @@ This is project-sample, which contain base functionality of the Tarantool 3.x.
 
 Tarantool is not database, but application framework with built-in 2 databases types: memtx (in-memory) and vinyl (on-disk). https://www.tarantool.io/en/doc/latest/concepts/data_model/.
 
-Current application implements functions for work with cache and session + emulate common Redis/Valkey API and allow to use it as cache or/and sessions storage for you simple project. You can use call functions like `CACHE:Set()`/`CACHE:Get()`/`SESSIONS:Add()`/`SESSIONS:Get()` with Tarantool's API (port 3301) or `SET`/`GET`/`FCALL` with Redis API (port 6379). [Work via Redis API is much faster than via Tarantool's - 2x]
+Current application implements functions for work with cache and sessions + emulate common Redis/Valkey API and allow to use it as cache or/and sessions storage for you simple project. You can call functions like `CACHE:Set()`/`CACHE:Get()`/`SESSIONS:Add()`/`SESSIONS:Get()` with Tarantool's API (port 3301) or `SET`/`GET`/`FCALL` with Redis API (port 6379). [Work via Redis API is much faster than via Tarantool's - 2x]
 
 ### List of files:
 
