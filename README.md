@@ -11,9 +11,9 @@ Current application implements functions for work with cache and session + emula
 | `docker-compose.yml` | sample docker settings which run master with replica |
 | `config.yaml`        | configs of the instance of the application (listener port, snapshot interval,.. plus structure of app-instances for master-replica cases )  |
 | `instances.yml`      | list of instances for `tt`. Inside docker container it doesn't uses |
-| `init.lua`           | start point of all functions |
-| `init-cache.lua`     | class to work with cache-storage |
-| `init-sessions.lua`  | class to work with sessions-storage  |
+| `init.lua`           | start point to init all functions. If you need only cache or only sessions, you can change `app.file` in `config.yaml` to specific init-file. |
+| `init-cache.lua`     | object to work with cache-storage |
+| `init-sessions.lua`  | object to work with sessions-storage  |
 | `init-redis-emu.lua` | Redis/Valkey API handler |
 
 
