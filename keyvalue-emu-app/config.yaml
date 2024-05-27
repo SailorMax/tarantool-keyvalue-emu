@@ -1,7 +1,7 @@
 app:
-  file: 'redis-cache-sess-app/init.lua'
+  file: 'keyvalue-emu-app/init.lua'
   cfg:
-    greeting: 'Redis-Cache-Sess sample project'
+    greeting: 'KeyValue-Emu sample project'
 
 # memtx:
 #   memory: 268435456

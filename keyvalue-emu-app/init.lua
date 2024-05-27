@@ -3,6 +3,7 @@
 local box = require('box')
 
 require('init-redis-emu')
+require('init-memcached-emu')
 CACHE = require('init-cache')
 SESSIONS = require('init-sessions')
 
@@ -12,14 +13,6 @@ end
 
 function GetTarantoolVersion()
 	return box.info.version
-end
-
-local function ord(c)
-    return string.format('%02X', string.byte(c))
-end
-
-function Bin2hex(str)
-    return str:gsub('.', ord)
 end
 
 -- Create queue storage

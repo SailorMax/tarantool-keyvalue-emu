@@ -17,6 +17,7 @@ local clock = require('clock')
 local socket = require('socket')
 local string = require('string')
 local config = require('config')
+require('tools')
 
 local Redis = {}
 local append = table.insert  -- speedup by not using global variable
@@ -245,8 +246,8 @@ function Redis:Command(cmd)
 		end
 
 	elseif cmd_name == 'DEL' then  -- https://valkey.io/commands/del/
-		for idx, value in ipairs(cmd) do
-			self.STORAGE:Delete(value)
+		for idx, key in ipairs(cmd) do
+			self.STORAGE:Delete(key)
 		end
 
 	elseif cmd_name == 'EXPIREAT' then  -- https://valkey.io/commands/expireat/

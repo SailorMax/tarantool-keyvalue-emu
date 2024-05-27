@@ -1,8 +1,8 @@
 This is project-sample, which contain base functionality of the Tarantool 3.x.
 
-Tarantool is not database, but application framework with built-in 2 databases types: memtx (in-memory) and vinyl (on-disk). https://www.tarantool.io/en/doc/latest/concepts/data_model/.
+Tarantool is not database, but application framework with built-in 2 database types: memtx (in-memory) and vinyl (on-disk). https://www.tarantool.io/en/doc/latest/concepts/data_model/.
 
-Current application implements functions for work with cache and sessions + emulate common Redis/Valkey API and allow to use it as cache or/and sessions storage for you simple project. You can call functions like `CACHE:Set()`/`CACHE:Get()`/`SESSIONS:Add()`/`SESSIONS:Get()` with Tarantool's API (port 3301) or `SET`/`GET`/`FCALL` with Redis API (port 6379). [Work via Redis API is much faster than via Tarantool's - 2x]
+Current application implements functions for work with cache and sessions + emulate common Redis/Valkey/Memcached API and allow to use it as cache or/and sessions storage for you simple project. You can call functions like `CACHE:Set()`/`CACHE:Get()`/`SESSIONS:Add()`/`SESSIONS:Get()` with Tarantool's API (port 3301) or `SET`/`GET`/`FCALL` with Redis API (port 6379) or `SET`/`GET`/`ADD` with Memcached API (port 11211). [Work via Redis API is much faster than via Tarantool's - 2x]
 
 ### List of files:
 
@@ -15,7 +15,11 @@ Current application implements functions for work with cache and sessions + emul
 | `init-cache.lua`     | object to work with cache-storage |
 | `init-sessions.lua`  | object to work with sessions-storage  |
 | `init-redis-emu.lua` | Redis/Valkey API handler |
+| `init-memcached-emu.lua` | Memcached text API handler |
+| `tools.lua`          | internal tools |
 
+### Remark
+To get cross-compatible cache between cache/redis/memcached setup clients serializer to json
 
 ### Replication
 Steps to setup/uses:

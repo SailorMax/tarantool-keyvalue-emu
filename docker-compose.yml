@@ -16,7 +16,7 @@ services:
       test: ["CMD-SHELL", "status"]
       interval: 1s
     environment: &tarantool-master_env
-      TT_APP_NAME: 'redis-cache-sess-app'
+      TT_APP_NAME: 'keyvalue-emu-app'
       TT_MEMTX_MEMORY: 268435456
       TT_MEMTX_MAX_TUPLE_SIZE: 1048576
       TT_FORCE_RECOVERY: 'true'
