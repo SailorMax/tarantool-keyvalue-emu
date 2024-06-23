@@ -1,3 +1,43 @@
+# version: '3.5'
+# # Sample file to use
+
+# services:
+#   tarantool: &tarantool-master
+#     image: tarantool/tarantool:3
+#     networks:
+#       - default
+#     ports:
+#       - 3301:3301
+#       - 6379:6379
+#     volumes:
+#       - ./:/opt/tarantool:ro
+#       - tarantool_data:/var/lib/tarantool:rw
+#     healthcheck:
+#       test: ["CMD-SHELL", "status"]
+#       interval: 1s
+#     environment: &tarantool-master_env
+#       TT_APP_NAME: 'keyvalue-emu-app'
+#       TT_MEMTX_MEMORY: 268435456
+#       TT_MEMTX_MAX_TUPLE_SIZE: 1048576
+#       TT_FORCE_RECOVERY: 'true'
+#       TT_LOG_LEVEL: 'info'
+#       TT_INSTANCE_NAME: instance-001
+
+#   tarantool-replica:
+#     <<: *tarantool-master
+#     ports:
+#       - 3302:3301
+#       - 6380:6379
+#     environment:
+#       <<: *tarantool-master_env
+#       TT_INSTANCE_NAME: 'instance-002'
+
+# volumes:
+#   tarantool_data:
+#     external: false
+
+
+
 version: '3.5'
 # Sample file to use
 
@@ -32,6 +72,33 @@ services:
       <<: *tarantool-master_env
       TT_INSTANCE_NAME: 'instance-002'
 
+  etcd:
+    image: quay.io/coreos/etcd:latest
+    command: >
+      /usr/local/bin/etcd
+      --name node1
+      --initial-advertise-peer-urls http://etcd:2380
+      --listen-peer-urls http://etcd:2380
+      --listen-client-urls http://etcd:2379,http://127.0.0.1:2379
+      --advertise-client-urls http://etcd:2379
+      --initial-cluster-token etcd-cluster
+      --initial-cluster node1=http://etcd:2380
+      --initial-cluster-state new
+    volumes:
+      - etcd_data:/etcd-data
+    ports:
+      - 2379:2379
+      - 2380:2380
+    networks:
+      - default
+      
+
 volumes:
   tarantool_data:
     external: false
+  etcd_data:
+
+networks:
+  default:
+    # external:
+    #   name: my_network  # Замените на имя вашей сети, если она уже создана

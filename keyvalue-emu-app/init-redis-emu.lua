@@ -43,7 +43,7 @@ socket.tcp_server('0.0.0.0', 6379, {
 			output = {},
 			user_cfg = {},
 			authenticated = false,
-			require_authentication = true,
+			-- require_authentication = true,
 			disconnect = false
 		}
 		setmetatable(RedisFork, { __index=Redis })  -- undefined attr => look at Redis (prototype-like)
@@ -280,6 +280,35 @@ function Redis:Command(cmd)
 
 	elseif cmd_name == 'QUIT' then  -- https://valkey.io/commands/quit/
 		self.disconnect = true
+
+	elseif cmd_name == "LPUSH" then
+		for i = 3, #cmd do
+			local result = self.STORAGE:ADD_in_queu(cmd[2],cmd[i],'left',600)
+			if not result then
+				log.info('error in queue name or data')
+				return nil
+			end
+		end
+		self:OutString('OK')
+		
+	elseif cmd_name == "RPUSH" then 
+		for i = 3, #cmd do
+			local result = self.STORAGE:ADD_in_queu(cmd[2],cmd[i],'right',600)
+			if not result then
+				log.info('error in queue name or data')
+				return nil
+			end
+		end
+		self:OutString('OK')
+
+	elseif cmd_name == 'LINDEX' then 
+		self:OutText(self.STORAGE:Get_in_queue(cmd[2],cmd[3]));
+
+	elseif cmd_name == 'LPOP' then 
+		self:OutText(self.STORAGE:Delete_from_queue(cmd[2],'left'))
+
+	elseif cmd_name == 'RPOP' then 
+		self:OutText(self.STORAGE:Delete_from_queue(cmd[2],'right'))
 
 	else
 		self:OutErrorString("Not supported command: " .. cmd[1])
