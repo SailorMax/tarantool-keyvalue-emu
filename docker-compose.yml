@@ -9,6 +9,7 @@ services:
     ports:
       - 3301:3301
       - 6379:6379
+      - 11211:11211
     volumes:
       - ./:/opt/tarantool:ro
       - tarantool_data:/var/lib/tarantool:rw
