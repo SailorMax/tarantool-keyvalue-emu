@@ -7,7 +7,7 @@ local fiber = require('fiber')
 local clock = require('clock')
 local box = require('box')
 local log = require('log')
-
+local cjson = require('json')
 local CACHE = {
 	schema = {
 		structure = {
@@ -100,6 +100,14 @@ function CACHE:Get(key)
 	return nil
 end
 
+function CACHE:Get_ttl(key)
+	local tuple = self.space:get{key};
+	if tuple ~= nil and (tuple.ttl == nil or tuple.ttl > clock.time()) then
+		return tuple.ttl
+	end
+	return nil
+end
+
 function CACHE:GetList(keys)
 	local values_list = {}
 	for key in pairs(keys) do
@@ -110,6 +118,67 @@ end
 
 function CACHE:Delete(key)
 	return self.space:delete{key}
+end
+
+--queu imitation
+function CACHE:ADD_in_queu(key,value,right_or_left, ttl)
+	if self:Get(key) then
+		local success, array_value = pcall (cjson.decode, self:Get(key))
+		if success and type(array_value) == 'table' then 
+			if right_or_left == 'right' then
+				table.insert(array_value, value)
+			elseif right_or_left == 'left' then
+				table.insert(array_value, 1, value)
+			end
+			self:Set(key, cjson.encode(array_value), ttl + floor(clock.time()) )
+			return success
+		else 
+			log.info('WRONGTYPE Operation against a key holding the wrong kind of value')
+		end
+
+	else
+		local success, array_value = pcall(cjson.encode, {value})
+		self:Add(key,array_value, ttl + floor(clock.time()))
+		return success
+		end
+end
+
+
+function CACHE:Get_in_queue(key,index)
+	if self:Get(key) then
+		log.info('Значение')
+		log.info(self:Get(key))
+		local success, array_value = pcall (cjson.decode, self:Get(key))
+		if success and type(array_value) == 'table' then 
+			local el = array_value[index+1]
+			return el
+		else
+			log.info("value is not array")
+		end
+	else
+		log.info('value not found')
+		return false
+	end
+end
+
+function CACHE:Delete_from_queue(key, right_or_left)
+	log.info('вход в функцию')
+	local success, value = pcall (cjson.decode, self:Get(key))
+	if success then 
+		log.info('процесс удаления:')
+		local remove_val
+		if right_or_left == 'left' then
+			remove_val = table.remove(value, 1)
+		elseif right_or_left == 'right' then
+			remove_val = table.remove(value) 
+		else
+			remove_val = nil
+		end
+		self:Set(key,cjson.encode(value),self:Get_ttl(key))
+		log.info('полученное значение:')
+		log.info(remove_val)
+		return remove_val
+	end
 end
 
 function CACHE:ForkForTableSpace(name)
